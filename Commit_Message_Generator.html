@@ -1,0 +1,728 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Commit Message Generator</title>
+
+<style type="text/css">
+
+html, body {height: 100%;}
+body >
+#main {
+height: auto; 
+min-height: 100%;
+padding-bottom: 30px; /* padding-bottom必须使用和footer相同的高度 */
+}
+#footer {
+position: relative;
+margin-top: 30px; /* footer高度的负值 */
+padding-top: 10px;
+height: 30px;
+clear:both;
+background:#fff;
+box-shadow: 0px 0px 5px #888888;
+}
+
+</style>
+
+<script type="text/javascript">
+function generate(){
+  var project=document.getElementsByName('project');
+  var type=document.getElementsByName('type');
+  var applyto=document.getElementsByName('applyto');
+  var module=document.getElementsByName('module');
+  var source=document.getElementsByName('source');
+  var bugid=document.getElementsByName('bugid');
+  var headline=document.getElementsByName('headline');
+  var message=document.getElementsByName('message');
+  var fixedBy=document.getElementsByName('fixedBy');
+  var portingFrom=document.getElementsByName('portingFrom');
+  var portingFromCommit=document.getElementsByName('portingFromCommit');
+  var defect=document.getElementsByName('defect');
+  var rootCause=document.getElementsByName('rootCause');
+  var howToFix=document.getElementsByName('howToFix');
+  var impactedGroup=document.getElementsByName('impactedGroup');
+
+  var copyText="["+project[0].value+"]["+type[0].value+"]["+applyto[0].value+"]["+module[0].value+"]["+source[0].value+"]["+bugid[0].value+"]"+headline[0].value;
+  
+  message[0].value=copyText;
+  
+  if(fixedBy[0].value!=""){
+    message[0].value+="\n\nfixed by "+fixedBy[0].value;
+  }
+  
+  if(portingFromCommit[0].value!=""){
+    message[0].value+="\n\nporting from "+portingFrom[0].value+" "+portingFromCommit[0].value;
+  }
+  
+  if(defect[0].value==""){
+    defect[0].value="N/A";
+  }
+  
+  if(rootCause[0].value==""){
+    rootCause[0].value="N/A";
+  }
+  
+  if(howToFix[0].value==""){
+    howToFix[0].value="N/A";
+  }
+  
+  if(impactedGroup[0].value==""){
+    impactedGroup[0].value=module[0].value.substring(0,1)+module[0].value.substring(1).toLowerCase();
+  }
+  
+  message[0].value+="\n\nDefect:\n"+defect[0].value;
+  message[0].value+="\n\nRoot cause:\n"+rootCause[0].value;
+  message[0].value+="\n\nHow to fix:\n"+howToFix[0].value;
+  message[0].value+="\n\nImpacted group:\n"+impactedGroup[0].value;
+};
+
+var onSourceChangedType = function(){
+  var type=document.getElementsByName('type');
+  var divPortingFrom=document.getElementById('id_div_porting_from');
+
+  if(type[0].value=="PORTING"){
+    divPortingFrom.style.display='block';
+  }else{
+    divPortingFrom.style.display='none';
+  }
+}
+
+var onSourceChangedImpactedGroup = function(){
+  var selectVal = document.getElementById("info_impacted_group_multi");
+  var impactedGroup=document.getElementsByName('impactedGroup');
+  
+  for(var i=0;i<selectVal.options.length;i++){
+    if(selectVal.options[i].selected){
+        var temp=selectVal.options[i].value.substring(0,1)+selectVal.options[i].value.substring(1).toLowerCase();
+		
+        if(impactedGroup[0].value==""){
+          impactedGroup[0].value=temp;
+        }else{
+		  if(impactedGroup[0].value.indexOf(temp)<0){
+		    impactedGroup[0].value+=","+temp;
+		  }
+        }
+    }
+  }
+};
+
+var onSourceChangedModule = function(){
+  var module=document.getElementsByName('module');
+  var impactedGroup=document.getElementsByName('impactedGroup');
+  var temp=module[0].value.substring(0,1)+module[0].value.substring(1).toLowerCase();
+  
+  if(impactedGroup[0].value.indexOf(",")<0){
+    impactedGroup[0].value=temp;
+  }else{
+    if(impactedGroup[0].value.indexOf(temp)<0){
+	  impactedGroup[0].value+=","+temp;
+	}
+  }
+};
+
+var onSourceChanged = function(){
+  var source=document.getElementsByName('source');
+  var bugid=document.getElementsByName('bugid');
+  var value=source[0].value;
+  
+  if(value=="CQ"){
+    bugid[0].placeholder="NJSCM";
+  }else if(value=="SQA"){
+    bugid[0].placeholder="BZ";
+  }else if(value==""){
+    bugid[0].placeholder="";
+  }else if(value=="OT"){
+    bugid[0].placeholder="";
+  }else{
+    bugid[0].placeholder="TD";
+  }
+};
+
+function printVersionInfo(){
+  document.write("Version: 1.2.3");
+  print4Space();
+  document.write("Released Date: 2015-11-18");
+};
+
+function selectInfo1(){
+  var info=document.getElementById("info1");
+  info.select();
+};
+
+function selectInfo2(){
+  var info=document.getElementById("info2");
+  info.select();
+};
+
+function selectInfo3(){
+  var info=document.getElementById("info3");
+  info.select();
+};
+
+function selectInfoFixedBy(){
+  var info=document.getElementById("info_fixed_by");
+  info.select();
+};
+
+function selectInfoPortingFromCommit(){
+  var info=document.getElementById("info_porting_from_commit");
+  info.select();
+}
+
+function selectInfoDefect(){
+  var info=document.getElementById("info_defect");
+  info.select();
+};
+
+function selectInfoRootCause(){
+  var info=document.getElementById("info_root_cause");
+  info.select();
+};
+
+function selectInfoHowToFix(){
+  var info=document.getElementById("info_how_to_fix");
+  info.select();
+};
+
+function selectInfoImpactedGroup(){
+  var info=document.getElementById("info_impacted_group");
+  info.select();
+};
+
+function print4Space(){
+  document.write("&nbsp;&nbsp;&nbsp;&nbsp;");
+};
+
+function printChangeLog(){
+  document.write("<br>Change Log:</br>");
+  
+  document.write("<br>Version 1.2.3");
+  document.write("<br>");
+  print4Space();
+  document.write("1、默认隐藏porting from字段以提升体验.");
+  document.write("<br>");
+  
+  document.write("<br>Version 1.2.2");
+  document.write("<br>");
+  print4Space();
+  document.write("1、增加信息段hint，避免填入错误信息.");
+  document.write("<br>");
+
+  document.write("<br>Version 1.2.1");
+  document.write("<br>");
+  print4Space();
+  document.write("1、完善commit信息，加入新的字段.");
+  document.write("<br>");
+  print4Space();
+  document.write("2、更名为Commit Message Generator.");
+  document.write("<br>");
+  print4Space();
+  document.write("3、Impacted Group支持多选.");
+  document.write("<br>");
+  
+  document.write("<br>Version 1.2.0");
+  document.write("<br>");
+  print4Space();
+  document.write("1、生成标准的commit信息.");
+  document.write("<br>");
+  print4Space();
+  document.write("2、Support for project D3.");
+  document.write("<br>");
+
+  document.write("<br>Version 1.1.1");
+  document.write("<br>");
+  print4Space();
+  document.write("1、Support for project D2.");
+  document.write("<br>");
+
+  document.write("<br>Version 1.1.0");
+  document.write("<br>");
+  print4Space();
+  document.write("1、优化界面显示和操作体验;");
+  document.write("<br>");
+  print4Space();
+  document.write("2、鼠标指针悬停即可选定输入框文本;");
+};
+//--------------------fade-in&fade-out--------------------------
+window.onload = function() {  
+    var testDiv = document.getElementById('version');  
+    testDiv.style.opacity = 0.0;  
+    testDiv.onmouseover = show;  
+    testDiv.onmouseout = hide;  
+};  
+var interval1, interval2;  
+var show = function() {  
+    if(interval2) {  
+        //display the object when move the point over the div
+        clearInterval(interval2);  
+    }  
+    i = document.getElementById('version').style.opacity*100;  
+    interval1 = setInterval("showRound()",20);  
+};  
+var showRound = function() {  
+    i++;  
+    var testDiv = document.getElementById('version');  
+    if(testDiv.style.opacity != 1.0) {  
+        testDiv.style.opacity = i/100;  
+    } else {  
+        if(interval1) {  
+            clearInterval(interval1);  
+        }  
+    }  
+}  
+var hide = function() {  
+    if(interval1) {  
+        //hide the object when move the point out from div
+        clearInterval(interval1);  
+    }  
+    j = document.getElementById('version').style.opacity*100;  
+    interval2 = setInterval("hideRound()",20);  
+};  
+var hideRound = function() {  
+    j--;  
+    var testDiv = document.getElementById('version');  
+    if(testDiv.style.opacity != 0.0) {  
+        testDiv.style.opacity = j/100;  
+    } else {  
+        if(interval2) {  
+            clearInterval(interval2);  
+        }  
+    }  
+};
+</script>
+</head>
+<body>
+<div>
+<h1>Commit Message Generator 1.2.3</h1>
+</div>
+<div id="main">
+<table>
+<!--------------------First Row-------------------------->
+<tr>
+<td>
+Project:
+</td>
+<td>
+<select name="project" style="width:300;height:40">
+<option value="V10">V10</option>
+<option value="D2">D2</option>
+<option value="D3" selected>D3</option>
+<option value="D5">D5</option>
+</select>
+</td>
+
+<td>
+Type:
+</td>
+<td>
+<select name="type" onchange="onSourceChangedType();" style="width:300;height:40">
+<option value="BUG" selected>BUG</option>
+<option value="FEATURE">FEATURE</option>
+<option value="MISC">MISC</option>
+<option value="PORTING">PORTING</option>
+</select>
+</td>
+</tr>
+<!--------------------Second Row-------------------------->
+<tr>
+<td>
+Apply To:
+</td>
+<td>
+<select name="applyto" style="width:300;height:40">
+<option value="COMMON" selected>COMMON-common patch</option>
+<option value="ASIOPE">ASIOPE-for Asia Open</option>
+<option value="BRACLR">BRACLR-for Brazil Claro</option>
+<option value="BRAOPE">BRAOPE-for Brazil Open</option>
+<option value="BRATIM">BRATIM-for Brazil TIM</option>
+<option value="CHLENT">CHLENT-for Chile Entel</option>
+<option value="CHLOPE">CHLOPE-for Chile Open</option>
+<option value="CHLTEL">CHLTEL-for Chile Telefonica</option>
+<option value="CISOPE">CISOPE-for CIS Open</option>
+<option value="COLCLR">CHLOPE-for Colombia Claro</option>
+<option value="EUROPE">EUROPE-for Europe Open</option>
+<option value="GUACLR">GUACLR-for Guatemala Claro</option>
+<option value="INDOPE">INDOPE-for India Open</option>
+<option value="INEOPE">INEOPE-for Indonesia Open</option>
+<option value="LATOPD">LATOPD-for Latam Open Dual</option>
+<option value="LATOPS">LATOPS-for Latam Open Single</option>
+<option value="MEAOPE">MEAOPE-for Mea Open</option>
+<option value="MEXIUS">MEXIUS-for Mexico Iusacell</option>
+<option value="MEXTEL">MEXTEL-for Mexico Telcel</option>
+<option value="PERCLR">PERCLR-for Peru Claro</option>
+</select>
+</td>
+
+<td>
+Module:
+</td>
+
+<td>
+<select name="module" onchange="onSourceChangedModule();" style="width:300;height:40">
+<option value="CAMERA" selected>CAMERA</option>
+<option value="GALLERY">GALLERY</option>
+<option value="SYSTEMUI">SYSTEMUI</option>
+
+<option value="ALARM">ALARM</option>
+<option value="ANR">ANR</option>
+<option value="APPS">APPS</option>
+<option value="ATCOMMAND">ATCOMMAND</option>
+<option value="AUDIO">AUDIO</option>
+<option value="BATTERY">BATTERY</option>
+<option value="BLUETOOTH">BLUETOOTH</option>
+<option value="BOOKMARK">BOOKMARK</option>
+<option value="BOOT">BOOT</option>
+<option value="BOOTLOGO">BOOTLOGO</option>
+<option value="BROWSER">BROWSER</option>
+<option value="BSP">BSP</option>
+<option value="BUILD">BUILD</option>
+<option value="CALCULATOR">CALCULATOR</option>
+<option value="CALENDAR">CALENDAR</option>
+<option value="CALL">CALL</option>
+<option value="CALLLOG">CALLLOG</option>
+<option value="SS_USSD">SS_USSD</option>
+<option value="CAMERA">CAMERA</option>
+<option value="CDS">CDS</option>
+<option value="CELLBROADCAST">CELLBROADCAST</option>
+<option value="CHARGER">CHARGER</option>
+<option value="CLEARCODE">CLEARCODE</option>
+<option value="CLOCK">CLOCK</option>
+<option value="CMAS">CMAS</option>
+<option value="COMMON">COMMON</option>
+<option value="CONFIG">CONFIG</option>
+<option value="CONTACT">CONTACT</option>
+<option value="CTS">CTS</option>
+<option value="DATE&TIME">DATE&TIME</option>
+<option value="DCTRACKER">DCTRACKER</option>
+<option value="DIALER">DIALER</option>
+<option value="DRM">DRM</option>
+<option value="DTV">DTV</option>
+<option value="EMAIL">EMAIL</option>
+<option value="ENGINEERMODE">ENGINEERMODE</option>
+<option value="EPL">EPL</option>
+<option value="EPL2182CALIBRATION">EPL2182CALIBRATION</option>
+<option value="FDN">FDN</option>
+<option value="FILEMANAGER">FILEMANAGER</option>
+<option value="FMRADIO">FMRADIO</option>
+<option value="FRAMEWORK">FRAMEWORK</option>
+<option value="FUNCTIONTEST">FUNCTIONTEST</option>
+<option value="GALLERY">GALLERY</option>
+<option value="GIT">GIT</option>
+<option value="GMS">GMS</option>
+<option value="GOTA">GOTA</option>
+<option value="GPRI">GPRI</option>
+<option value="GPS">GPS</option>
+<option value="GTS">GTS</option>
+<option value="HARDWARE">HARDWARE</option>
+<option value="HIDDENMENU">HIDDENMENU</option>
+<option value="ICU">ICU</option>
+<option value="INPUTMETHOD">INPUTMETHOD</option>
+<option value="INTERNAL">INTERNAL</option>
+<option value="KEYBOARD">KEYBOARD</option>
+<option value="KNOCKCODE">KNOCKCODE</option>
+<option value="LAUNCHER">LAUNCHER</option>
+<option value="LCM">LCM</option>
+<option value="LIVEPICKER">LIVEPICKER</option>
+<option value="LIVEWALLPAPER">LIVEWALLPAPER</option>
+<option value="LOCKSCREEN">LOCKSCREEN</option>
+<option value="MEDIA">MEDIA</option>
+<option value="MESSAGE">MESSAGE</option>
+<option value="MMS">MMS</option>
+<option value="MODEM">MODEM</option>
+<option value="MONKEY">MONKEY</option>
+<option value="MTP">MTP</option>
+<option value="MULTIUSER">MULTIUSER</option>
+<option value="MUSIC">MUSIC</option>
+<option value="MVNO">MVNO</option>
+<option value="NETWORK">NETWORK</option>
+<option value="NVRAM">NVRAM</option>
+<option value="OTA">OTA</option>
+<option value="OTP">OTP</option>
+<option value="PERIOD">PERIOD</option>
+<option value="PERLOADER">PERLOADER</option>
+<option value="PHONE">PHONE</option>
+<option value="PIN">PIN</option>
+<option value="PROJECTCONFIG">PROJECTCONFIG</option>
+<option value="PROTOCOL">PROTOCOL</option>
+<option value="PSENSORCALIBRATION">PSENSORCALIBRATION</option>
+<option value="PTCRB">PTCRB</option>
+<option value="RECENT">RECENT</option>
+<option value="RINGTONE">RINGTONE</option>
+<option value="SDCARD">SDCARD</option>
+<option value="SECURITY">SECURITY</option>
+<option value="SENSOR">SENSOR</option>
+<option value="SETTINGS">SETTINGS</option>
+<option value="SHUTDOWN">SHUTDOWN</option>
+<option value="SIM">SIM</option>
+<option value="SIMLOCK">SIMLOCK</option>
+<option value="SMS">SMS</option>
+<option value="SOUNDRECORDER">SOUNDRECORDER</option>
+<option value="SPN">SPN</option>
+<option value="STATUSBAR">STATUSBAR</option>
+<option value="STK">STK</option>
+<option value="SYSTEMAPP">SYSTEMAPP</option>
+<option value="SYSTEMUI">SYSTEMUI</option>
+<option value="TELECOMM">TELECOMM</option>
+<option value="TELEPHONY">TELEPHONY</option>
+<option value="TETHER">TETHER</option>
+<option value="THIRDAPK">THIRDAPK</option>
+<option value="TIMEZONE">TIMEZONE</option>
+<option value="TOKEN">TOKEN</option>
+<option value="UBOOT">UBOOT</option>
+<option value="UI">UI</option>
+<option value="USB">USB</option>
+<option value="USERAGENT">USERAGENT</option>
+<option value="VIBRATOR">VIBRATOR</option>
+<option value="VIDEO">VIDEO</option>
+<option value="VOICEMAIL">VOICEMAIL</option>
+<option value="WIDGET">WIDGET</option>
+<option value="WIFI">WIFI</option>
+</select>
+</td>
+</tr>
+<!--------------------Third Row-------------------------->
+<tr>
+<td>
+Source:
+</td>
+<td>
+<select name="source" onchange="onSourceChanged();" style="width:300;height:40">
+<option value="">NONE</option>
+<option value="CQ" selected>CQ</option>
+<option value="SQA">SQA</option>
+<option value="OT">OT-from others</option>
+<option value="ASIOPE">ASIOPE-from Asia Open</option>
+<option value="BRACLR">BRACLR-from Brazil Claro</option>
+<option value="BRAOPE">BRAOPE-from Brazil Open</option>
+<option value="BRATIM">BRATIM-from Brazil TIM</option>
+<option value="CHLENT">CHLENT-from Chile Entel</option>
+<option value="CHLOPE">CHLOPE-from Chile Open</option>
+<option value="CHLTEL">CHLTEL-from Chile Telefonica</option>
+<option value="CISOPE">CISOPE-from CIS Open</option>
+<option value="COLCLR">CHLOPE-from Colombia Claro</option>
+<option value="EUROPE">EUROPE-from Europe Open</option>
+<option value="GUACLR">GUACLR-from Guatemala Claro</option>
+<option value="INDOPE">INDOPE-from India Open</option>
+<option value="INEOPE">INEOPE-for Indonesia Open</option>
+<option value="LATOPD">LATOPD-from Latam Open Dual</option>
+<option value="LATOPS">LATOPS-from Latam Open Single</option>
+<option value="MEAOPE">MEAOPE-for Mea Open</option>
+<option value="MEXIUS">MEXIUS-from Mexico Iusacell</option>
+<option value="MEXTEL">MEXTEL-from Mexico Telcel</option>
+<option value="PERCLR">PERCLR-from Peru Claro</option>
+</select>
+</td>
+<td>
+Bug ID:
+</td>
+<td>
+<input id="info1" type="text" name="bugid" placeholder="NJSCM" style="width:300;height:40" onmouseover="selectInfo1();"/>
+</td>
+</tr>
+</table>
+
+<p>
+<!--------------------HeadLine-------------------------->
+<input id="info2" type="text" name="headline" placeholder="Fixed Messaging Setting have no
+response when click Multimedia Message" style="width:735;height:40" onmouseover="selectInfo2();"/>
+
+<br>
+
+<!--------------------Fixed by-------------------------->
+<br>Fixed by:
+<input id="info_fixed_by" type="text" name="fixedBy" placeholder="7b5b0f07ba983b922c442dafd48cfaef371a6ce0" 
+style="width:670;height:40" onmouseover="selectInfoFixedBy();"/>
+<br/>
+
+<!--------------------Porting from---------------------->
+<div id="id_div_porting_from" style="display:none">
+Porting from:<br>
+<select name="portingFrom" style="width:60;height:40">
+<option value="V10">V10</option>
+<option value="D2">D2</option>
+<option value="D3" selected>D3</option>
+<option value="D5">D5</option>
+</select>
+<input id="info_porting_from_commit" type="text" name="portingFromCommit" placeholder="7b5b0f07ba983b922c442dafd48cfaef371a6ce0" 
+style="width:670;height:40" onmouseover="selectInfoPortingFromCommit();"/>
+<br>
+<br>
+</div>
+<!--------------------Defect---------------------------->
+Defect: <br>
+<input id="info_defect" type="text" name="defect" placeholder="The menu of power key doesn't disappear." 
+style="width:735;height:40" onmouseover="selectInfoDefect();"/>
+<br>
+
+<!--------------------Root cause------------------------>
+<br>Root cause: <br/>
+<input id="info_root_cause" type="text" name="rootCause" placeholder="Windows will not closed automatically." 
+style="width:735;height:40" onmouseover="selectInfoRootCause();"/>
+<br>
+
+<!--------------------How to fix------------------------>
+<br>How to fix: <br/>
+<input id="info_how_to_fix" type="text" name="howToFix" placeholder="Add more conditions to avoid crash." 
+style="width:735;height:40" onmouseover="selectInfoHowToFix();"/>
+<br>
+
+<!--------------------Impacted group-------------------->
+<br>Impacted group: <br/>
+<input id="info_impacted_group" type="text" name="impactedGroup" placeholder="Framework,Camera" 
+style="width:625;height:40" onmouseover="selectInfoImpactedGroup();"/>
+<select id="info_impacted_group_multi" style="width:105;height:40" onchange="onSourceChangedImpactedGroup();">
+<option value="CAMERA" selected>CAMERA</option>
+<option value="GALLERY">GALLERY</option>
+<option value="SYSTEMUI">SYSTEMUI</option>
+
+<option value="ALARM">ALARM</option>
+<option value="ANR">ANR</option>
+<option value="APPS">APPS</option>
+<option value="ATCOMMAND">ATCOMMAND</option>
+<option value="AUDIO">AUDIO</option>
+<option value="BATTERY">BATTERY</option>
+<option value="BLUETOOTH">BLUETOOTH</option>
+<option value="BOOKMARK">BOOKMARK</option>
+<option value="BOOT">BOOT</option>
+<option value="BOOTLOGO">BOOTLOGO</option>
+<option value="BROWSER">BROWSER</option>
+<option value="BSP">BSP</option>
+<option value="BUILD">BUILD</option>
+<option value="CALCULATOR">CALCULATOR</option>
+<option value="CALENDAR">CALENDAR</option>
+<option value="CALL">CALL</option>
+<option value="CALLLOG">CALLLOG</option>
+<option value="SS_USSD">SS_USSD</option>
+<option value="CAMERA">CAMERA</option>
+<option value="CDS">CDS</option>
+<option value="CELLBROADCAST">CELLBROADCAST</option>
+<option value="CHARGER">CHARGER</option>
+<option value="CLEARCODE">CLEARCODE</option>
+<option value="CLOCK">CLOCK</option>
+<option value="CMAS">CMAS</option>
+<option value="COMMON">COMMON</option>
+<option value="CONFIG">CONFIG</option>
+<option value="CONTACT">CONTACT</option>
+<option value="CTS">CTS</option>
+<option value="DATE&TIME">DATE&TIME</option>
+<option value="DCTRACKER">DCTRACKER</option>
+<option value="DIALER">DIALER</option>
+<option value="DRM">DRM</option>
+<option value="DTV">DTV</option>
+<option value="EMAIL">EMAIL</option>
+<option value="ENGINEERMODE">ENGINEERMODE</option>
+<option value="EPL">EPL</option>
+<option value="EPL2182CALIBRATION">EPL2182CALIBRATION</option>
+<option value="FDN">FDN</option>
+<option value="FILEMANAGER">FILEMANAGER</option>
+<option value="FMRADIO">FMRADIO</option>
+<option value="FRAMEWORK">FRAMEWORK</option>
+<option value="FUNCTIONTEST">FUNCTIONTEST</option>
+<option value="GALLERY">GALLERY</option>
+<option value="GIT">GIT</option>
+<option value="GMS">GMS</option>
+<option value="GOTA">GOTA</option>
+<option value="GPRI">GPRI</option>
+<option value="GPS">GPS</option>
+<option value="GTS">GTS</option>
+<option value="HARDWARE">HARDWARE</option>
+<option value="HIDDENMENU">HIDDENMENU</option>
+<option value="ICU">ICU</option>
+<option value="INPUTMETHOD">INPUTMETHOD</option>
+<option value="INTERNAL">INTERNAL</option>
+<option value="KEYBOARD">KEYBOARD</option>
+<option value="KNOCKCODE">KNOCKCODE</option>
+<option value="LAUNCHER">LAUNCHER</option>
+<option value="LCM">LCM</option>
+<option value="LIVEPICKER">LIVEPICKER</option>
+<option value="LIVEWALLPAPER">LIVEWALLPAPER</option>
+<option value="LOCKSCREEN">LOCKSCREEN</option>
+<option value="MEDIA">MEDIA</option>
+<option value="MESSAGE">MESSAGE</option>
+<option value="MMS">MMS</option>
+<option value="MODEM">MODEM</option>
+<option value="MONKEY">MONKEY</option>
+<option value="MTP">MTP</option>
+<option value="MULTIUSER">MULTIUSER</option>
+<option value="MUSIC">MUSIC</option>
+<option value="MVNO">MVNO</option>
+<option value="NETWORK">NETWORK</option>
+<option value="NVRAM">NVRAM</option>
+<option value="OTA">OTA</option>
+<option value="OTP">OTP</option>
+<option value="PERIOD">PERIOD</option>
+<option value="PERLOADER">PERLOADER</option>
+<option value="PHONE">PHONE</option>
+<option value="PIN">PIN</option>
+<option value="PROJECTCONFIG">PROJECTCONFIG</option>
+<option value="PROTOCOL">PROTOCOL</option>
+<option value="PSENSORCALIBRATION">PSENSORCALIBRATION</option>
+<option value="PTCRB">PTCRB</option>
+<option value="RECENT">RECENT</option>
+<option value="RINGTONE">RINGTONE</option>
+<option value="SDCARD">SDCARD</option>
+<option value="SECURITY">SECURITY</option>
+<option value="SENSOR">SENSOR</option>
+<option value="SETTINGS">SETTINGS</option>
+<option value="SHUTDOWN">SHUTDOWN</option>
+<option value="SIM">SIM</option>
+<option value="SIMLOCK">SIMLOCK</option>
+<option value="SMS">SMS</option>
+<option value="SOUNDRECORDER">SOUNDRECORDER</option>
+<option value="SPN">SPN</option>
+<option value="STATUSBAR">STATUSBAR</option>
+<option value="STK">STK</option>
+<option value="SYSTEMAPP">SYSTEMAPP</option>
+<option value="SYSTEMUI">SYSTEMUI</option>
+<option value="TELECOMM">TELECOMM</option>
+<option value="TELEPHONY">TELEPHONY</option>
+<option value="TETHER">TETHER</option>
+<option value="THIRDAPK">THIRDAPK</option>
+<option value="TIMEZONE">TIMEZONE</option>
+<option value="TOKEN">TOKEN</option>
+<option value="UBOOT">UBOOT</option>
+<option value="UI">UI</option>
+<option value="USB">USB</option>
+<option value="USERAGENT">USERAGENT</option>
+<option value="VIBRATOR">VIBRATOR</option>
+<option value="VIDEO">VIDEO</option>
+<option value="VOICEMAIL">VOICEMAIL</option>
+<option value="WIDGET">WIDGET</option>
+<option value="WIFI">WIFI</option>
+</select>
+<input type="submit" value="Generate" onclick="generate();" style="height:40"/>
+<br>
+
+<!--------------------Commit Message-------------------->
+<br>Commit Message: <br/>
+<textarea id="info3" name="message" style="width:735;height:300" onmouseover="selectInfo3();"></textarea>
+
+<!--------------------备注说明-------------------------->
+<div id="note" align="bottom" style="padding:10;">
+<font size="2" color="gray">
+<br>Note:
+<br>[1][2][3][4][5][6]7
+<br>[1]：Project，可选项为D2，D3，D5，不可为空
+<br>[2]：Type，可选项为PORTING，BUG，FEATURE，MISC，不可为空
+<br>[3]：Apply To，可选项为COMMON，CA缩写，不可为空
+<br>[4]：Module，可选项为模块名，不可为空
+<br>[5]：Source，可选项为CQ，SQA，CA缩写(TD)，可为空
+<br>[6]：Bug ID，CQ为NJSCMXXXXXXXX，SQA为XXXX，TD为TDXXXX，可为空。最多只可填写一个bug号，如果有几条，请参考empty commit部分。
+<br>[7]：HeadLine, patch的title或简要描述
+<br>已知问题：
+<br>1、ibus输入法中文状态导致选定时文本丢失
+</font>
+</div>
+
+<!--------------------版本说明-------------------->
+<div id="version" align="bottom" style="padding:10;color: black;size: 2;">
+<script>printChangeLog()</script>
+</div>
+
+</div>
+
+
+<!--Version Information-->
+<div id="footer" align="center"><script>printVersionInfo()</script></div>
+</body>
+</html>
