@@ -19,7 +19,7 @@ padding-top: 10px;
 height: 30px;
 clear:both;
 background:#fff;
-box-shadow: 0px 0px 5px #888888;
+box-shadow: 0px 0px 5px #880088;
 }
 
 </style>
@@ -141,9 +141,9 @@ var onSourceChanged = function(){
 function printVersionInfo(){
   document.write("Author: Alex.zhong");
   print4Space();
-  document.write("Version: 1.2.3");
+  document.write("Version: 1.2.4");
   print4Space();
-  document.write("Released Date: 2015-11-18");
+  document.write("Released Date: 2015-12-14");
 };
 
 function selectInfo1(){
@@ -197,6 +197,15 @@ function print4Space(){
 
 function printChangeLog(){
   document.write("<br>Change Log:</br>");
+
+  document.write("<br>Version 1.2.4");
+  document.write("<br>");
+  print4Space();
+  document.write("1、优化Headline字段的显示效果，更便于阅读和选择.");
+  document.write("<br>");
+  print4Space();
+  document.write("2、优化兼容Chrome和Firefox的显示效果.");
+  document.write("<br>");
   
   document.write("<br>Version 1.2.3");
   document.write("<br>");
@@ -245,8 +254,80 @@ function printChangeLog(){
   print4Space();
   document.write("2、鼠标指针悬停即可选定输入框文本;");
 };
-//--------------------fade-in&fade-out--------------------------
+//--------------------Browser Type and Version--------------------------
+var getBrowserInfo = function() {
+    var ret = {};
+    var Sys = {};
+    var ua = navigator.userAgent.toLowerCase();
+    var s;
+    if(navigator.appVersion.match(/MSIE 6./i) == "6.") {
+        ret.type = "IE";
+        ret.version = 6;
+        return ret;
+    } else {
+        (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+            (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+                (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+                    (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+                        (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+    }
+     
+    if (Sys.ie) {
+        ret.type = "IE";
+        ret.version = Sys.ie;
+    } else if (Sys.firefox) {
+        ret.type = "Firefox";
+        ret.version = Sys.firefox;
+    } else if (Sys.chrome) {
+        ret.type = "Chrome";
+        ret.version = Sys.chrome;
+    } else if (Sys.opera) {
+        ret.type = "Opera";
+        ret.version = Sys.opera;
+    } else if (Sys.safari) {
+        ret.type = "Safari";
+        ret.version = Sys.safari;
+    }
+     
+    return ret;
+}
+
+var initialStyle = function() {
+  var headline=         document.getElementsByName('headline');
+  var message=          document.getElementsByName('message');
+  var fixedBy=          document.getElementsByName('fixedBy');
+  var portingFromCommit=document.getElementsByName('portingFromCommit');
+  var defect=           document.getElementsByName('defect');
+  var rootCause=        document.getElementsByName('rootCause');
+  var howToFix=         document.getElementsByName('howToFix');
+  var impactedGroup=    document.getElementsByName('impactedGroup');
+
+  var ret = getBrowserInfo();
+  
+  if (ret.type=="Firefox") {
+      headline[0].style.width=755;
+      message[0].style.width=755;
+      defect[0].style.width=755;
+      rootCause[0].style.width=755;
+      howToFix[0].style.width=755;
+      fixedBy[0].style.width=677;
+      portingFromCommit[0].style.width=680;
+      impactedGroup[0].style.width=640;
+    } else if (ret.type=="Chrome") {
+      headline[0].style.width=735;
+      message[0].style.width=735;
+      defect[0].style.width=735;
+      rootCause[0].style.width=735;
+      howToFix[0].style.width=735;
+      fixedBy[0].style.width=670;
+      portingFromCommit[0].style.width=670;
+      impactedGroup[0].style.width=625;
+    }
+}
+//-------------------- Animation fade-in and fade-out--------------------------
 window.onload = function() {  
+    initialStyle();
+
     var testDiv = document.getElementById('version');  
     testDiv.style.opacity = 0.0;  
     testDiv.onmouseover = show;  
@@ -295,7 +376,7 @@ var hideRound = function() {
 </head>
 <body>
 <div>
-<h1>Commit Message Generator 1.2.3</h1>
+<h1>Commit Message Generator 1.2.4</h1>
 </div>
 <div id="main">
 <table>
@@ -305,7 +386,7 @@ var hideRound = function() {
 Project:
 </td>
 <td>
-<select name="project" style="width:300;height:40">
+<select name="project" style="width:300;height:40;font-family:'Courier New';">
 <option value="V10">V10</option>
 <option value="D2">D2</option>
 <option value="D3" selected>D3</option>
@@ -317,7 +398,7 @@ Project:
 Type:
 </td>
 <td>
-<select name="type" onchange="onSourceChangedType();" style="width:300;height:40">
+<select name="type" onchange="onSourceChangedType();" style="width:300;height:40;font-family:'Courier New';">
 <option value="BUG" selected>BUG</option>
 <option value="FEATURE">FEATURE</option>
 <option value="MISC">MISC</option>
@@ -331,7 +412,7 @@ Type:
 Apply To:
 </td>
 <td>
-<select name="applyto" style="width:300;height:40">
+<select name="applyto" style="width:300;height:40;font-family:'Courier New';">
 <option value="COMMON" selected>COMMON-common patch</option>
 <option value="ASIOPE">ASIOPE-for Asia Open</option>
 <option value="BRACLR">BRACLR-for Brazil Claro</option>
@@ -360,7 +441,7 @@ Module:
 </td>
 
 <td>
-<select name="module" onchange="onSourceChangedModule();" style="width:300;height:40">
+<select name="module" onchange="onSourceChangedModule();" style="width:300;height:40;font-family:'Courier New';">
 <option value="CAMERA" selected>CAMERA</option>
 <option value="GALLERY">GALLERY</option>
 <option value="SYSTEMUI">SYSTEMUI</option>
@@ -488,7 +569,7 @@ Module:
 Source:
 </td>
 <td>
-<select name="source" onchange="onSourceChanged();" style="width:300;height:40">
+<select name="source" onchange="onSourceChanged();" style="width:300;height:40;font-family:'Courier New';">
 <option value="">NONE</option>
 <option value="CQ" selected>CQ</option>
 <option value="SQA">SQA</option>
@@ -505,10 +586,10 @@ Source:
 <option value="EUROPE">EUROPE-from Europe Open</option>
 <option value="GUACLR">GUACLR-from Guatemala Claro</option>
 <option value="INDOPE">INDOPE-from India Open</option>
-<option value="INEOPE">INEOPE-for Indonesia Open</option>
+<option value="INEOPE">INEOPE-from Indonesia Open</option>
 <option value="LATOPD">LATOPD-from Latam Open Dual</option>
 <option value="LATOPS">LATOPS-from Latam Open Single</option>
-<option value="MEAOPE">MEAOPE-for Mea Open</option>
+<option value="MEAOPE">MEAOPE-from Mea Open</option>
 <option value="MEXIUS">MEXIUS-from Mexico Iusacell</option>
 <option value="MEXTEL">MEXTEL-from Mexico Telcel</option>
 <option value="PERCLR">PERCLR-from Peru Claro</option>
@@ -518,7 +599,7 @@ Source:
 Bug ID:
 </td>
 <td>
-<input id="info1" type="text" name="bugid" placeholder="NJSCM" style="width:300;height:40" onmouseover="selectInfo1();"/>
+<input id="info1" type="text" name="bugid" placeholder="NJSCM" style="width:300;height:40;font-family:'Courier New';" onmouseover="selectInfo1();"/>
 </td>
 </tr>
 </table>
@@ -526,14 +607,14 @@ Bug ID:
 <p>
 <!--------------------HeadLine-------------------------->
 <input id="info2" type="text" name="headline" placeholder="Fix Messaging Setting have no response when click Multimedia Message" 
-style="width:735;height:40" onmouseover="selectInfo2();"/>
+style="width:755;height:40" onmouseover="selectInfo2();"/>
 
 <br>
 
 <!--------------------Fixed by-------------------------->
 <br>Fixed by:
 <input id="info_fixed_by" type="text" name="fixedBy" placeholder="7b5b0f07ba983b922c442dafd48cfaef371a6ce0" 
-style="width:670;height:40" onmouseover="selectInfoFixedBy();"/>
+style="width:677;height:40" onmouseover="selectInfoFixedBy();"/>
 <br/>
 
 <!--------------------Porting from---------------------->
@@ -546,32 +627,32 @@ Porting from:<br>
 <option value="D5">D5</option>
 </select>
 <input id="info_porting_from_commit" type="text" name="portingFromCommit" placeholder="7b5b0f07ba983b922c442dafd48cfaef371a6ce0" 
-style="width:670;height:40" onmouseover="selectInfoPortingFromCommit();"/>
+style="width:680;height:40" onmouseover="selectInfoPortingFromCommit();"/>
 <br>
 <br>
 </div>
 <!--------------------Defect---------------------------->
 Defect: <br>
 <input id="info_defect" type="text" name="defect" placeholder="The menu of power key doesn't disappear." 
-style="width:735;height:40" onmouseover="selectInfoDefect();"/>
+style="width:755;height:40" onmouseover="selectInfoDefect();"/>
 <br>
 
 <!--------------------Root cause------------------------>
 <br>Root cause: <br/>
 <input id="info_root_cause" type="text" name="rootCause" placeholder="Windows will not closed automatically." 
-style="width:735;height:40" onmouseover="selectInfoRootCause();"/>
+style="width:755;height:40" onmouseover="selectInfoRootCause();"/>
 <br>
 
 <!--------------------How to fix------------------------>
 <br>How to fix: <br/>
 <input id="info_how_to_fix" type="text" name="howToFix" placeholder="Add more conditions to avoid crash." 
-style="width:735;height:40" onmouseover="selectInfoHowToFix();"/>
+style="width:755;height:40" onmouseover="selectInfoHowToFix();"/>
 <br>
 
 <!--------------------Impacted group-------------------->
 <br>Impacted group: <br/>
 <input id="info_impacted_group" type="text" name="impactedGroup" placeholder="Framework,Camera" 
-style="width:625;height:40" onmouseover="selectInfoImpactedGroup();"/>
+style="width:640;height:40" onmouseover="selectInfoImpactedGroup();"/>
 <select id="info_impacted_group_multi" style="width:105;height:40" onchange="onSourceChangedImpactedGroup();">
 <option value="CAMERA" selected>CAMERA</option>
 <option value="GALLERY">GALLERY</option>
@@ -697,7 +778,7 @@ style="width:625;height:40" onmouseover="selectInfoImpactedGroup();"/>
 
 <!--------------------Commit Message-------------------->
 <br>Commit Message: <br/>
-<textarea id="info3" name="message" style="width:735;height:300" onmouseover="selectInfo3();"></textarea>
+<textarea id="info3" name="message" style="width:755;height:300" onmouseover="selectInfo3();"></textarea>
 
 <!--------------------备注说明-------------------------->
 <div id="note" align="bottom" style="padding:10;">
